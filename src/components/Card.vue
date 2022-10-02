@@ -4,13 +4,21 @@
       class="card relative mx-auto w-96 h-80 p-8 flex flex-col items-center justify-center bg-white shadow-md rounded"
     >
       <div class="text-sm mb-auto">{{ index + 1 }}/{{ words.length }}</div>
-      <div class="mb-auto">
+      <div class="mb-auto relative pr-8">
         <TransitionShrink>
           <h4 class="text-3xl">{{ word.text }}</h4>
         </TransitionShrink>
         <TransitionShrink>
           <h4 class="mb-6">[{{ word.transcription }}]</h4>
         </TransitionShrink>
+        <button @click="speechWord" class="absolute right-0 top-3">
+          <img
+            src="../assets/img/sound.svg"
+            width="20"
+            height="20"
+            alt="Озвучить слово"
+          />
+        </button>
       </div>
       <TransitionFade :isLeave="false">
         <h4
@@ -31,8 +39,9 @@
           </button>
         </TransitionShrink>
         <button
-          @click="nextCard"
-          :disabled="index + 1 >= maxWords"
+          @click="setNextCard"
+          v-if="isNextButtonDisabled"
+          :disabled="isNextButtonDisabled"
           class="w-full px-6 py-4 bg-cyan-500 text-slate-50 font-semibold rounded transition-all duration-300 hover:bg-cyan-600"
         >
           Дальше
@@ -46,6 +55,8 @@
 import axios from 'axios'
 import TransitionShrink from './ui/TransitionShrink.vue'
 import TransitionFade from './ui/TransitionFade.vue'
+
+const synth = window.speechSynthesis
 
 const API_KEY =
   'dict.1.1.20220901T125532Z.f63805697bba0d92.dcf91da32bda07d09e85eeb64adca4eb7e0a25cb'
@@ -75,6 +86,9 @@ export default {
     maxWords() {
       return this.words.length
     },
+    isNextButtonDisabled() {
+      return this.index + 1 >= this.maxWords
+    },
     currentWord() {
       return this.words[this.index]
     }
@@ -85,7 +99,7 @@ export default {
     }
   },
   methods: {
-    nextCard() {
+    setNextCard() {
       this.index++
       this.isTranslated = false
       this.$emit('onNextCard')
@@ -94,6 +108,10 @@ export default {
       this.getWord(word).then(() => {
         this.word.text = word
       })
+    },
+    speechWord() {
+      const text = new SpeechSynthesisUtterance(this.word.text)
+      synth.speak(text)
     },
     getWord(word) {
       return axios.get(URL + word).then((response) => {
@@ -104,23 +122,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.scale-slide-enter-active,
-.scale-slide-leave-active {
-  position: absolute;
-  transition: all 0.85s ease;
-}
-.scale-slide-enter-from {
-  left: -100%;
-}
-.scale-slide-enter-to {
-  left: 0%;
-}
-.scale-slide-leave-from {
-  transform: scale(1);
-}
-.scale-slide-leave-to {
-  transform: scale(0.8);
-}
-</style>

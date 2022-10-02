@@ -20,6 +20,7 @@ export default {
     }
   },
   created() {
+    console.log('rerender')
     if (this.words.length <= 0) {
       const URL = 'data/words.json'
       axios
