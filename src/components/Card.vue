@@ -4,14 +4,14 @@
       class="card relative mx-auto w-96 h-80 p-8 flex flex-col items-center justify-center bg-white shadow-md rounded"
     >
       <div class="text-sm mb-auto">{{ index + 1 }}/{{ words.length }}</div>
-      <div class="mb-auto relative pr-8">
+      <div class="mb-auto relative">
         <TransitionShrink>
           <h4 class="text-3xl">{{ word.text }}</h4>
         </TransitionShrink>
         <TransitionShrink>
           <h4 class="mb-6">[{{ word.transcription }}]</h4>
         </TransitionShrink>
-        <button @click="speechWord" class="absolute right-0 top-3">
+        <button @click="speechWord" class="absolute -right-8 top-3">
           <img
             src="../assets/img/sound.svg"
             width="20"
@@ -32,7 +32,7 @@
         <TransitionShrink>
           <button
             v-show="!isTranslated"
-            @click="isTranslated = true"
+            @click="translateWord"
             class="w-full px-6 py-4 bg-cyan-500 text-slate-50 font-semibold rounded transition-all duration-300 hover:bg-cyan-600"
           >
             Перевести
@@ -40,7 +40,7 @@
         </TransitionShrink>
         <button
           @click="setNextCard"
-          v-if="isNextButtonDisabled"
+          v-if="!isNextButtonDisabled"
           :disabled="isNextButtonDisabled"
           class="w-full px-6 py-4 bg-cyan-500 text-slate-50 font-semibold rounded transition-all duration-300 hover:bg-cyan-600"
         >
@@ -111,6 +111,7 @@ export default {
     },
     speechWord() {
       const text = new SpeechSynthesisUtterance(this.word.text)
+      synth.cancel()
       synth.speak(text)
     },
     getWord(word) {
@@ -118,6 +119,10 @@ export default {
         this.word.translate = response.data.def[0].tr[0].text
         this.word.transcription = response.data.def[0].ts
       })
+    },
+    translateWord() {
+      this.isTranslated = true
+      this.$emit('saveWord', this.word)
     }
   }
 }
