@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="cards mt-16">
-      <Cards @saveWord="$emit('saveWord', $event)" />
+      <Cards />
     </div>
   </div>
 </template>

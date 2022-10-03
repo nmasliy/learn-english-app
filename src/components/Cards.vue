@@ -1,54 +1,38 @@
 <template>
-  <Card :words="wordsList" @saveWord="$emit('saveWord', $event)" />
+  <Card />
 </template>
 
 <script>
 import Card from '@/components/Card.vue'
-import axios from 'axios'
 
 export default {
   name: 'AppCards',
   components: { Card },
-  data() {
-    return {
-      words: [],
-      wordsList: []
-    }
-  },
   computed: {
     isWordsLoaded() {
-      return this.words.length > 0
+      return this.$store.getters.getWordList.length > 0
     }
   },
-  created() {
-    console.log('rerender')
-    console.log(this.isWordsLoaded)
+  mounted() {
     if (!this.isWordsLoaded) {
-      const URL = 'data/words.json'
-      axios
-        .get(URL)
-        .then((response) => {
-          this.words = response.data.words
-          this.setWordsList(response.data.words)
-          this.$emit('wordsLoaded')
-        })
-        .catch((err) => {
-          console.error(err)
-        })
+      this.$store.dispatch('fetchWordList').then(() => {
+        this.setWordList(this.$store.getters.getWordList)
+      })
     }
   },
   methods: {
-    setWordsList(words) {
+    setWordList(words) {
       const WORDS_COUNT = 20
+      const activeWordList = []
 
       for (let i = 0; i < WORDS_COUNT; i++) {
         const randomIndex = Math.floor(Math.random() * words.length - 1)
 
-        this.wordsList.push(words[randomIndex])
+        activeWordList.push(words[randomIndex])
       }
+
+      this.$store.commit('setActiveWordList', activeWordList)
     }
   }
 }
 </script>
-
-<style></style>

@@ -3,7 +3,11 @@
     <div
       class="card relative mx-auto w-96 h-80 p-8 flex flex-col items-center justify-center bg-white shadow-md rounded"
     >
-      <div class="text-sm mb-auto">{{ index + 1 }}/{{ words.length }}</div>
+      <div class="text-sm mb-auto">
+        {{ $store.getters.getActiveWordIndex + 1 }}/{{
+          $store.getters.getActiveWordList.length
+        }}
+      </div>
       <div class="mb-auto relative">
         <TransitionShrink>
           <h4 class="text-3xl">{{ word.text }}</h4>
@@ -52,61 +56,58 @@
 </template>
 
 <script>
-import axios from 'axios'
 import TransitionShrink from './ui/TransitionShrink.vue'
 import TransitionFade from './ui/TransitionFade.vue'
 
 const synth = window.speechSynthesis
 
-const API_KEY =
-  'dict.1.1.20220901T125532Z.f63805697bba0d92.dcf91da32bda07d09e85eeb64adca4eb7e0a25cb'
-const URL = `https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=${API_KEY}&lang=en-ru&text=`
-
 export default {
   name: 'AppCard',
   components: { TransitionShrink, TransitionFade },
-  props: {
-    words: {
-      type: Array,
-      required: true
-    }
-  },
   data() {
     return {
       word: {
-        text: 'Placeholder',
-        translate: 'Плейсхолдер',
-        transcription: 'Placeholder'
+        text: 'Loading...',
+        translate: 'Идёт загрузка',
+        transcription: 'Подождите'
       },
-      index: 0,
       isTranslated: false
     }
   },
   computed: {
     maxWords() {
-      return this.words.length
+      return this.$store.getters.getActiveWordList.length
     },
     isNextButtonDisabled() {
-      return this.index + 1 >= this.maxWords
+      return this.$store.getters.getActiveWordIndex + 1 >= this.maxWords
     },
-    currentWord() {
-      return this.words[this.index]
+    currentWordText() {
+      return this.$store.getters.getActiveWordList[
+        this.$store.getters.getActiveWordIndex
+      ]
+    }
+  },
+  mounted() {
+    if (this.currentWordText) {
+      this.setNextWord(this.currentWordText)
     }
   },
   watch: {
-    currentWord() {
-      this.setNextWord(this.currentWord)
+    currentWordText() {
+      this.setNextWord(this.currentWordText)
     }
   },
   methods: {
     setNextCard() {
-      this.index++
+      this.$store.commit('increaseIndex')
+      // this.setNextWord(this.word.text)
       this.isTranslated = false
-      this.$emit('onNextCard')
     },
-    setNextWord(word) {
-      this.getWord(word).then(() => {
-        this.word.text = word
+    setNextWord(wordText) {
+      this.$store.dispatch('fetchWord', { wordText }).then((result) => {
+        this.word.text = wordText
+        this.word.translate = result.translate
+        this.word.transcription = result.transcription
       })
     },
     speechWord() {
@@ -114,15 +115,9 @@ export default {
       synth.cancel()
       synth.speak(text)
     },
-    getWord(word) {
-      return axios.get(URL + word).then((response) => {
-        this.word.translate = response.data.def[0].tr[0].text
-        this.word.transcription = response.data.def[0].ts
-      })
-    },
     translateWord() {
       this.isTranslated = true
-      this.$emit('saveWord', this.word)
+      this.$store.commit('saveWord', this.word)
     }
   }
 }

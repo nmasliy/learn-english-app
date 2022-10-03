@@ -4,15 +4,9 @@
       <nav class="my-6 text-xl font-medium">
         <router-link :to="{ name: 'home' }">Learn</router-link>
         |
-        <router-link
-          :to="{
-            name: 'cards',
-            params: { savedWords: JSON.stringify(savedWords) }
-          }"
-          >Cards</router-link
-        >
+        <router-link :to="{ name: 'cards' }">Cards</router-link>
       </nav>
-      <router-view v-slot="{ Component }" @saveWord="saveWordHandler">
+      <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />
         </transition>
@@ -20,19 +14,3 @@
     </div>
   </div>
 </template>
-<script>
-export default {
-  name: 'App',
-  data() {
-    return {
-      savedWords: []
-    }
-  },
-  methods: {
-    saveWordHandler(word) {
-      this.savedWords.push(word)
-    }
-  },
-  emits: ['saveWord']
-}
-</script>
