@@ -4,6 +4,7 @@
 
 <script>
 import Card from '@/components/Card.vue'
+import { mapActions, mapMutations } from 'vuex'
 
 export default {
   name: 'AppCards',
@@ -15,12 +16,14 @@ export default {
   },
   mounted() {
     if (!this.isWordsLoaded) {
-      this.$store.dispatch('fetchWordList').then(() => {
+      this.fetchWordList().then(() => {
         this.setWordList(this.$store.getters.getWordList)
       })
     }
   },
   methods: {
+    ...mapActions(['fetchWordList']),
+    ...mapMutations(['setActiveWordList']),
     setWordList(words) {
       const WORDS_COUNT = 20
       const activeWordList = []
@@ -31,7 +34,7 @@ export default {
         activeWordList.push(words[randomIndex])
       }
 
-      this.$store.commit('setActiveWordList', activeWordList)
+      this.setActiveWordList(activeWordList)
     }
   }
 }
