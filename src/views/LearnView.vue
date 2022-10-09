@@ -1,14 +1,16 @@
 <template>
   <div class="mt-16">
     <div v-if="isLearnStarted">
-      <CardNew
+      <Card
         :words="words"
-        :activeWordIndex="activeWordIndex"
-        @increaseWordIndex="increaseSavedIndex"
+        :isTranslated="getSavedIsTranslated()"
+        :activeWordIndex="getSavedCurrentIndex()"
+        @increaseWordIndex="changeWord"
         @saveWord="saveWord"
       />
       <button
-        @click="isLearnStarted = false"
+        v-show="isSavedWordsEnd"
+        @click="finishLearning"
         class="px-6 py-4 mt-8 bg-cyan-500 text-slate-50 font-semibold rounded transition-all duration-300 hover:bg-cyan-600"
       >
         Закончить изучение
@@ -36,7 +38,7 @@
         v-else
         class="px-6 py-4 bg-cyan-500 text-slate-50 font-semibold rounded transition-all duration-300 hover:bg-cyan-600"
       >
-        Начать изучение
+        {{ startButtonText }}
       </button>
     </div>
     <div v-else class="text-left">
@@ -47,12 +49,12 @@
   </div>
 </template>
 <script>
-import CardNew from '@/components/Card-New.vue'
+import Card from '@/components/Card.vue'
 import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'CardsView',
-  components: { CardNew },
+  components: { Card },
   data() {
     return {
       minWordsToLearn: 5,
@@ -67,15 +69,49 @@ export default {
     isMinWordsTolearn() {
       return this.words.length >= this.minWordsToLearn
     },
-    activeWordIndex() {
-      return this.getSavedCurrentIndex()
+    startButtonText() {
+      return this.getSavedCurrentIndex() > 0
+        ? 'Продолжить изучение'
+        : 'Начать изучение'
+    },
+    isSavedWordsEnd() {
+      return this.getSavedCurrentIndex() + 1 >= this.words.length
     }
   },
+  beforeUnmount() {
+    this.setSavedIsTranslated(false)
+  },
   methods: {
-    ...mapGetters(['getSavedWordList', 'getSavedCurrentIndex']),
-    ...mapMutations(['increaseSavedIndex']),
+    ...mapGetters([
+      'getSavedWordList',
+      'getSavedCurrentIndex',
+      'getSavedIsTranslated'
+    ]),
+    ...mapMutations([
+      'increaseSavedIndex',
+      'setSavedIsTranslated',
+      'setSavedIndex'
+    ]),
+
     saveWord(word) {
+      // Exclude duplicates
+      if (
+        this.savedWordList[this.savedWordList.length - 1]?.text === word.text
+      ) {
+        console.log('duplicate')
+      }
       this.savedWordList.push(word)
+      this.setSavedIsTranslated(true)
+    },
+
+    changeWord() {
+      this.increaseSavedIndex()
+      this.setSavedIsTranslated(false)
+    },
+
+    finishLearning() {
+      this.isLearnStarted = false
+      this.setSavedIndex(0)
     }
   }
 }

@@ -1,10 +1,9 @@
 <template>
   <div
-    v-if="currentWordText"
     class="card relative mx-auto w-96 h-80 p-8 flex flex-col items-center justify-center bg-white shadow-md rounded"
   >
     <div class="text-sm mb-auto">
-      {{ getActiveWordIndex() + 1 }}/{{ getActiveWordList().length }}
+      {{ activeWordIndex + 1 }}/{{ words.length }}
     </div>
     <div class="mb-auto relative">
       <TransitionShrink>
@@ -34,7 +33,7 @@
       <TransitionShrink>
         <button
           v-show="!isTranslated"
-          @click="translateWord"
+          @click="saveWord"
           class="w-full px-6 py-4 bg-cyan-500 text-slate-50 font-semibold rounded transition-all duration-300 hover:bg-cyan-600"
         >
           Перевести
@@ -50,73 +49,53 @@
       </button>
     </div>
   </div>
-  <div v-else>Загрузка</div>
 </template>
 
 <script>
 import TransitionShrink from './ui/TransitionShrink.vue'
 import TransitionFade from './ui/TransitionFade.vue'
-import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 const synth = window.speechSynthesis
 
 export default {
   name: 'AppCard',
   components: { TransitionShrink, TransitionFade },
-  data() {
-    return {
-      word: {
-        text: 'Loading...',
-        translate: 'Идёт загрузка',
-        transcription: 'Подождите'
-      },
-      isTranslated: false
+  props: {
+    words: {
+      type: Array,
+      required: true
+    },
+    activeWordIndex: {
+      type: Number,
+      default: 0
+    },
+    isTranslated: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
+    word() {
+      return this.words[this.activeWordIndex]
+    },
     maxWords() {
-      return this.getActiveWordList().length
+      return this.words.length
     },
     isNextButtonDisabled() {
-      return this.getActiveWordIndex() + 1 >= this.maxWords
-    },
-    currentWordText() {
-      return this.getActiveWordList()[this.getActiveWordIndex()]
-    }
-  },
-  mounted() {
-    if (this.currentWordText) {
-      this.setNextWord(this.currentWordText)
-    }
-  },
-  watch: {
-    currentWordText() {
-      this.setNextWord(this.currentWordText)
+      return this.activeWordIndex + 1 >= this.maxWords
     }
   },
   methods: {
-    ...mapActions(['fetchWord']),
-    ...mapMutations(['saveWord', 'increaseIndex']),
-    ...mapGetters(['getActiveWordIndex', 'getActiveWordList']),
     setNextCard() {
-      this.increaseIndex()
-      this.isTranslated = false
-    },
-    setNextWord(wordText) {
-      this.fetchWord(wordText).then((result) => {
-        this.word.text = wordText
-        this.word.translate = result.translate
-        this.word.transcription = result.transcription
-      })
+      this.$emit('increaseWordIndex')
     },
     speechWord() {
       const text = new SpeechSynthesisUtterance(this.word.text)
       synth.cancel()
       synth.speak(text)
     },
-    translateWord() {
-      this.isTranslated = true
-      this.saveWord(this.word)
+    saveWord() {
+      this.$emit('saveWord', this.word)
     }
   }
 }

@@ -4,9 +4,8 @@ export default {
   state: {
     wordList: [],
     activeWordList: [],
-    savedWordList: [],
     activeCurrentIndex: 0,
-    savedCurrentIndex: 0
+    isTranslated: false
   },
   mutations: {
     setWordList(state, payload) {
@@ -15,14 +14,11 @@ export default {
     setActiveWordList(state, payload) {
       state.activeWordList = payload
     },
-    addWordToSavedList(state, payload) {
-      state.savedWordList.push(payload)
-    },
     increaseActiveIndex(state) {
       state.activeCurrentIndex++
     },
-    increaseSavedIndex(state) {
-      state.savedCurrentIndex++
+    setActiveIsTranslated(state, payload) {
+      state.isTranslated = payload
     }
   },
   getters: {
@@ -32,14 +28,11 @@ export default {
     getActiveWordList(state) {
       return state.activeWordList
     },
-    getSavedWordList(state) {
-      return state.savedWordList
-    },
-    getSavedCurrentIndex(state) {
-      return state.savedCurrentIndex
-    },
     getActiveCurrentIndex(state) {
       return state.activeCurrentIndex
+    },
+    getActiveIsTranslated(state) {
+      return state.isTranslated
     }
   },
   actions: {

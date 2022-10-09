@@ -1,10 +1,11 @@
 <template>
   <div class="home">
     <div v-if="isWordsFetched" class="home__wrapper mt-16">
-      <CardNew
+      <Card
         :words="words"
-        :activeWordIndex="activeWordIndex"
-        @increaseWordIndex="increaseActiveIndex"
+        :isTranslated="getActiveIsTranslated()"
+        :activeWordIndex="getActiveCurrentIndex()"
+        @increaseWordIndex="changeWord"
         @saveWord="saveWord"
       />
     </div>
@@ -14,20 +15,17 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
-import CardNew from '@/components/Card-New.vue'
+import Card from '@/components/Card.vue'
 
 export default {
   name: 'HomeView',
-  components: { CardNew },
+  components: { Card },
   computed: {
     isWordsFetched() {
       return this.words.length > 0
     },
     words() {
       return this.getActiveWordList()
-    },
-    activeWordIndex() {
-      return this.getActiveCurrentIndex()
     }
   },
   mounted() {
@@ -46,12 +44,23 @@ export default {
     ...mapMutations([
       'setActiveWordList',
       'addWordToSavedList',
-      'increaseActiveIndex'
+      'increaseActiveIndex',
+      'setActiveIsTranslated'
     ]),
-    ...mapGetters(['getActiveWordList', 'getActiveCurrentIndex']),
+    ...mapGetters([
+      'getActiveWordList',
+      'getActiveCurrentIndex',
+      'getActiveIsTranslated'
+    ]),
+
+    changeWord() {
+      this.increaseActiveIndex()
+      this.setActiveIsTranslated(false)
+    },
 
     saveWord(word) {
       this.addWordToSavedList(word)
+      this.setActiveIsTranslated(true)
     }
   }
 }

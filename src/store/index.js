@@ -1,9 +1,11 @@
 import { createStore } from 'vuex'
-import cardsModule from '@/store/cardsModule'
+import homeModule from '@/store/homeModule'
+import learnModule from '@/store/learnModule'
 
 const store = createStore({
   modules: {
-    cardsModule
+    homeModule,
+    learnModule
   }
 })
 
