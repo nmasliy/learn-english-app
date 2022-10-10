@@ -94,14 +94,12 @@ export default {
     ]),
 
     saveWord(word) {
+      const lastItemInSaved = this.savedWordList[this.savedWordList.length - 1]
       // Exclude duplicates
-      if (
-        this.savedWordList[this.savedWordList.length - 1]?.text === word.text
-      ) {
-        console.log('duplicate')
-      }
-      this.savedWordList.push(word)
       this.setSavedIsTranslated(true)
+      if (!lastItemInSaved?.text === word.text) {
+        this.savedWordList.push(word)
+      }
     },
 
     changeWord() {
