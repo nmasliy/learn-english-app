@@ -53,7 +53,7 @@ import Card from '@/components/Card.vue'
 import { mapGetters, mapMutations } from 'vuex'
 
 export default {
-  name: 'CardsView',
+  name: 'LearnView',
   components: { Card },
   data() {
     return {
@@ -66,6 +66,9 @@ export default {
     words() {
       return this.getSavedWordList()
     },
+    isWordListSavedToStorage() {
+      return localStorage.getItem('savedWordList')
+    },
     isMinWordsTolearn() {
       return this.words.length >= this.minWordsToLearn
     },
@@ -76,6 +79,11 @@ export default {
     },
     isSavedWordsEnd() {
       return this.getSavedCurrentIndex() + 1 >= this.words.length
+    }
+  },
+  mounted() {
+    if (this.isWordListSavedToStorage) {
+      this.setSavedWordList(JSON.parse(localStorage.getItem('savedWordList')))
     }
   },
   beforeUnmount() {
@@ -90,7 +98,8 @@ export default {
     ...mapMutations([
       'increaseSavedIndex',
       'setSavedIsTranslated',
-      'setSavedIndex'
+      'setSavedIndex',
+      'setSavedWordList'
     ]),
 
     saveWord(word) {

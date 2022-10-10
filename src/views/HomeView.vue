@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <div v-if="isWordsFetched" class="home__wrapper mt-16">
+    <div v-if="isLoaded" class="home__wrapper mt-16">
       <Card
         :words="words"
         :isTranslated="getActiveIsTranslated()"
@@ -20,22 +20,38 @@ import Card from '@/components/Card.vue'
 export default {
   name: 'HomeView',
   components: { Card },
+  data() {
+    return {
+      isLoaded: false
+    }
+  },
   computed: {
-    isWordsFetched() {
-      return this.words.length > 0
+    isWordListSavedToStorage() {
+      return Boolean(localStorage.getItem('activeWordList'))
     },
     words() {
       return this.getActiveWordList()
+    },
+    isWordListExist() {
+      return this.words.length > 0
     }
   },
   mounted() {
-    if (!this.isWordsFetched) {
+    if (this.isWordListSavedToStorage) {
+      this.setActiveWordList(JSON.parse(localStorage.getItem('activeWordList')))
+      this.isLoaded = true
+    } else if (this.isWordListExist) {
+      localStorage.setItem('activeWordList', JSON.stringify(this.words))
+      this.isLoaded = true
+    } else {
       this.fetchWordsByCount(20)
         .then((words) => {
           return this.fetchWordsData(words)
         })
         .then((data) => {
           this.setActiveWordList(data)
+          localStorage.setItem('activeWordList', JSON.stringify(data))
+          this.isLoaded = true
         })
     }
   },
@@ -45,12 +61,14 @@ export default {
       'setActiveWordList',
       'addWordToSavedList',
       'increaseActiveIndex',
-      'setActiveIsTranslated'
+      'setActiveIsTranslated',
+      'setSavedWordList'
     ]),
     ...mapGetters([
       'getActiveWordList',
       'getActiveCurrentIndex',
-      'getActiveIsTranslated'
+      'getActiveIsTranslated',
+      'getSavedWordList'
     ]),
 
     changeWord() {
@@ -61,6 +79,10 @@ export default {
     saveWord(word) {
       this.addWordToSavedList(word)
       this.setActiveIsTranslated(true)
+      localStorage.setItem(
+        'savedWordList',
+        JSON.stringify(this.getSavedWordList())
+      )
     }
   }
 }

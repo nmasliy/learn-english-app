@@ -14,6 +14,9 @@ export default {
     addWordToSavedList(state, payload) {
       state.savedWordList.push(payload)
     },
+    setSavedWordList(state, payload) {
+      state.savedWordList = payload
+    },
     setSavedIsTranslated(state, payload) {
       state.isTranslated = payload
     }
