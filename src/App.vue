@@ -9,7 +9,7 @@
         <router-link :to="{ name: 'learn' }">Учить слова</router-link>
       </nav>
       <router-view v-slot="{ Component }">
-        <transition name="fade" mode="out-in">
+        <transition name="fade-scale" mode="out-in">
           <component :is="Component" />
         </transition>
       </router-view>
