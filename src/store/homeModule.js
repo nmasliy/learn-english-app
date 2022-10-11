@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { getRandomElementsFromArray } from '@/helpers'
 
 export default {
   state: {
@@ -20,6 +21,7 @@ export default {
     },
     setActiveIndex(state, payload) {
       state.activeCurrentIndex = payload
+      localStorage.setItem('activeCurrentIndex', payload)
     },
     setActiveIsTranslated(state, payload) {
       state.isTranslated = payload
@@ -53,15 +55,8 @@ export default {
         })
     },
     fetchWordsByCount(context, count) {
-      const words = []
-
       return context.dispatch('fetchWordList').then((wordList) => {
-        for (let i = 0; i < count; i++) {
-          const randomIndex = Math.floor(Math.random() * wordList.length - 1)
-
-          words.push(wordList[randomIndex])
-        }
-        return words
+        return getRandomElementsFromArray(wordList, count)
       })
     },
     fetchWordData(context, wordText) {

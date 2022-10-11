@@ -1,16 +1,17 @@
 <template>
   <div
-    class="rotate card relative mx-auto w-96 h-80 p-8 flex flex-col items-center justify-center bg-white shadow-md rounded"
+    class="rotate card relative mx-auto w-96 h-[22rem] p-8 flex flex-col items-center justify-center bg-white shadow-md rounded"
     :class="animateClasses"
   >
-    <div class="text-sm mb-auto">
+    <div class="text-sm mb-12">
       {{ activeWordIndex + 1 }}/{{ words.length }}
     </div>
-    <div class="mb-auto relative">
+    <div class="relative">
       <h4 class="text-3xl">{{ word.text }}</h4>
       <h4 class="mb-6">[{{ word.transcription }}]</h4>
       <button @click="speechWord" class="absolute -right-8 top-3">
         <img
+          class="animate-pulse"
           src="../assets/img/sound.svg"
           width="20"
           height="20"
@@ -20,11 +21,11 @@
     </div>
     <h4
       v-show="isTranslated"
-      class="text-2xl mb-6 absolute top-44 mx-auto inset-x-0"
+      class="text-xl mb-6 inset-x-0 text-cyan-800 font-semibold"
     >
       {{ word.translate }}
     </h4>
-    <div class="flex gap-x-3 w-full">
+    <div class="flex gap-x-3 w-full mt-auto">
       <button
         class="w-full px-6 py-4 bg-cyan-500 text-slate-50 font-semibold rounded transition-all duration-300 enabled:hover:bg-cyan-600"
         :class="{ 'opacity-50 bg-slate-500': isTranslated }"
@@ -102,11 +103,10 @@ export default {
   },
   methods: {
     setNextCard() {
-      this.isWordChanging = true
-      this.animateChangeWord(() => this.$emit('increaseWordIndex'))
-
       if (this.isLastWordInCard) {
-        this.$emit('lastWordInCard')
+        this.animateChangeWord(() => this.$emit('onWordsOver'))
+      } else {
+        this.animateChangeWord(() => this.$emit('increaseWordIndex'))
       }
     },
     speechWord() {
@@ -118,6 +118,8 @@ export default {
       this.$emit('saveWord', this.word)
     },
     animateChangeWord(callback) {
+      this.isWordChanging = true
+
       setTimeout(() => {
         callback()
       }, this.wordChangeTime / 2)

@@ -4,9 +4,17 @@
   >
     <div class="container text-center max-w-3xl mx-auto">
       <nav class="my-6 text-xl font-medium">
-        <router-link :to="{ name: 'home' }">Проверка знаний</router-link>
+        <router-link
+          class="border-b-2 border-transparent transition-all"
+          :to="{ name: 'home' }"
+          >Проверка знаний</router-link
+        >
         |
-        <router-link :to="{ name: 'learn' }">Учить слова</router-link>
+        <router-link
+          class="border-b-2 border-transparent transition-all"
+          :to="{ name: 'learn' }"
+          >Учить слова</router-link
+        >
       </nav>
       <router-view v-slot="{ Component }">
         <transition name="fade-scale" mode="out-in">

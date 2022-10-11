@@ -12,7 +12,7 @@
           :isReusable="true"
           @increaseWordIndex="changeWord"
           @saveWord="saveWord"
-          @lastWordInCard="updateCard"
+          @onWordsOver="updateCard"
         />
       </div>
     </transition>
@@ -92,10 +92,6 @@ export default {
     saveWord(word) {
       this.addWordToSavedList(word)
       this.setActiveIsTranslated(true)
-      localStorage.setItem(
-        'savedWordList',
-        JSON.stringify(this.getSavedWordList())
-      )
     },
 
     updateCard() {
@@ -106,6 +102,7 @@ export default {
         })
         .then((data) => {
           this.setActiveWordList(data)
+          this.setActiveIsTranslated(false)
           localStorage.setItem('activeWordList', JSON.stringify(data))
           this.setActiveIndex(0)
           localStorage.setItem('activeCurrentIndex', 0)

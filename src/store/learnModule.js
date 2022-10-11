@@ -7,9 +7,11 @@ export default {
   mutations: {
     increaseSavedIndex(state) {
       state.savedCurrentIndex++
+      localStorage.setItem('savedCurrentIndex', state.savedCurrentIndex)
     },
     setSavedIndex(state, payload) {
       state.savedCurrentIndex = payload
+      localStorage.setItem('savedCurrentIndex', payload)
     },
     addWordToSavedList(state, payload) {
       const isWordAlreadySaved = state.savedWordList.find(
@@ -17,6 +19,10 @@ export default {
       )
       if (!isWordAlreadySaved) {
         state.savedWordList.push(payload)
+        localStorage.setItem(
+          'savedWordList',
+          JSON.stringify(state.savedWordList)
+        )
       }
     },
     setSavedWordList(state, payload) {
