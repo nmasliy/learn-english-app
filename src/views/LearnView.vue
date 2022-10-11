@@ -1,7 +1,10 @@
 <template>
-  <div class="mt-16">
+  <div class="learn mt-16">
     <transition name="fade-scale" mode="out-in">
-      <div v-if="isLearnStarted">
+      <div v-if="!isLoaded">
+        <Loader />
+      </div>
+      <div v-else-if="isLearnStarted">
         <Card
           :words="words"
           :isTranslated="getSavedIsTranslated()"
@@ -52,16 +55,18 @@
 </template>
 <script>
 import Card from '@/components/Card.vue'
+import Loader from '@/components/Loader.vue'
 import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'LearnView',
-  components: { Card },
+  components: { Card, Loader },
   data() {
     return {
       minWordsToLearn: 5,
       isLearnStarted: false,
-      savedWordList: []
+      savedWordList: [],
+      isLoaded: false
     }
   },
   computed: {
@@ -87,6 +92,7 @@ export default {
     if (this.isWordListSavedToStorage) {
       this.setSavedWordList(JSON.parse(localStorage.getItem('savedWordList')))
     }
+    this.isLoaded = true
   },
   beforeUnmount() {
     this.setSavedIsTranslated(false)
@@ -105,12 +111,8 @@ export default {
     ]),
 
     saveWord(word) {
-      const lastItemInSaved = this.savedWordList[this.savedWordList.length - 1]
-      // Exclude duplicates (need fix)
       this.setSavedIsTranslated(true)
-      if (!lastItemInSaved?.text === word.text) {
-        this.savedWordList.push(word)
-      }
+      this.savedWordList.push(word)
     },
 
     changeWord() {

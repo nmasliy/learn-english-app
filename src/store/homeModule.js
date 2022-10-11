@@ -91,7 +91,6 @@ export default {
             const translateWordFirst = response.data.def[0]?.tr[0]?.text
             const translateWordSecond = response.data.def[1]?.tr[0]?.text
 
-            console.log(response.data.def[1]?.tr[0]?.text)
             const wordData = {
               text: wordText,
               translate: translateWordSecond

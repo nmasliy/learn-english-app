@@ -12,7 +12,12 @@ export default {
       state.savedCurrentIndex = payload
     },
     addWordToSavedList(state, payload) {
-      state.savedWordList.push(payload)
+      const isWordAlreadySaved = state.savedWordList.find(
+        (item) => item.text === payload.text
+      )
+      if (!isWordAlreadySaved) {
+        state.savedWordList.push(payload)
+      }
     },
     setSavedWordList(state, payload) {
       state.savedWordList = payload

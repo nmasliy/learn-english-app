@@ -1,25 +1,30 @@
 <template>
-  <div class="home">
-    <div v-if="isLoaded" class="home__wrapper mt-16">
-      <Card
-        :words="words"
-        :isTranslated="getActiveIsTranslated()"
-        :activeWordIndex="getActiveCurrentIndex()"
-        @increaseWordIndex="changeWord"
-        @saveWord="saveWord"
-      />
-    </div>
-    <div v-else>Загрузка...</div>
+  <div class="home mt-16">
+    <transition name="fade-scale" mode="out-in">
+      <div v-if="!isLoaded">
+        <Loader />
+      </div>
+      <div v-else class="home__wrapper">
+        <Card
+          :words="words"
+          :isTranslated="getActiveIsTranslated()"
+          :activeWordIndex="getActiveCurrentIndex()"
+          @increaseWordIndex="changeWord"
+          @saveWord="saveWord"
+        />
+      </div>
+    </transition>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import Card from '@/components/Card.vue'
+import Loader from '@/components/Loader.vue'
 
 export default {
   name: 'HomeView',
-  components: { Card },
+  components: { Card, Loader },
   data() {
     return {
       isLoaded: false
