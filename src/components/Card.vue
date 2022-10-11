@@ -39,7 +39,7 @@
         :disabled="isNextButtonDisabled || isWordChanging"
         @click="setNextCard"
       >
-        Дальше
+        {{ nextButtonText }}
       </button>
     </div>
   </div>
@@ -68,6 +68,10 @@ export default {
     isTranslated: {
       type: Boolean,
       default: false
+    },
+    isReusable: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -77,8 +81,18 @@ export default {
     maxWords() {
       return this.words.length
     },
-    isNextButtonDisabled() {
+    isLastWordInCard() {
       return this.activeWordIndex + 1 >= this.maxWords
+    },
+    isNextButtonDisabled() {
+      return this.isLastWordInCard && !this.isReusable
+    },
+    nextButtonText() {
+      if (this.isReusable && this.isLastWordInCard) {
+        return 'Обновить'
+      } else {
+        return 'Дальше'
+      }
     },
     animateClasses() {
       return {
@@ -90,6 +104,10 @@ export default {
     setNextCard() {
       this.isWordChanging = true
       this.animateChangeWord(() => this.$emit('increaseWordIndex'))
+
+      if (this.isLastWordInCard) {
+        this.$emit('lastWordInCard')
+      }
     },
     speechWord() {
       const text = new SpeechSynthesisUtterance(this.word.text)

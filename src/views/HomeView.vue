@@ -9,8 +9,10 @@
           :words="words"
           :isTranslated="getActiveIsTranslated()"
           :activeWordIndex="activeWordIndex"
+          :isReusable="true"
           @increaseWordIndex="changeWord"
           @saveWord="saveWord"
+          @lastWordInCard="updateCard"
         />
       </div>
     </transition>
@@ -94,6 +96,21 @@ export default {
         'savedWordList',
         JSON.stringify(this.getSavedWordList())
       )
+    },
+
+    updateCard() {
+      this.isLoaded = false
+      this.fetchWordsByCount(20)
+        .then((words) => {
+          return this.fetchWordsData(words)
+        })
+        .then((data) => {
+          this.setActiveWordList(data)
+          localStorage.setItem('activeWordList', JSON.stringify(data))
+          this.setActiveIndex(0)
+          localStorage.setItem('activeCurrentIndex', 0)
+          this.isLoaded = true
+        })
     }
   }
 }
