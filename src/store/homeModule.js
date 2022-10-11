@@ -16,6 +16,10 @@ export default {
     },
     increaseActiveIndex(state) {
       state.activeCurrentIndex++
+      localStorage.setItem('activeCurrentIndex', state.activeCurrentIndex)
+    },
+    setActiveIndex(state, payload) {
+      state.activeCurrentIndex = payload
     },
     setActiveIsTranslated(state, payload) {
       state.isTranslated = payload

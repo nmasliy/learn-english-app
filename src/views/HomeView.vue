@@ -8,7 +8,7 @@
         <Card
           :words="words"
           :isTranslated="getActiveIsTranslated()"
-          :activeWordIndex="getActiveCurrentIndex()"
+          :activeWordIndex="activeWordIndex"
           @increaseWordIndex="changeWord"
           @saveWord="saveWord"
         />
@@ -32,18 +32,23 @@ export default {
   },
   computed: {
     isWordListSavedToStorage() {
-      return Boolean(localStorage.getItem('activeWordList'))
+      return localStorage.getItem('activeWordList')
     },
     words() {
       return this.getActiveWordList()
     },
     isWordListExist() {
       return this.words.length > 0
+    },
+    activeWordIndex() {
+      return this.getActiveCurrentIndex()
     }
   },
   mounted() {
     if (this.isWordListSavedToStorage) {
       this.setActiveWordList(JSON.parse(localStorage.getItem('activeWordList')))
+      this.setActiveIndex(+localStorage.getItem('activeCurrentIndex') || 0)
+
       this.isLoaded = true
     } else if (this.isWordListExist) {
       localStorage.setItem('activeWordList', JSON.stringify(this.words))
@@ -67,7 +72,8 @@ export default {
       'addWordToSavedList',
       'increaseActiveIndex',
       'setActiveIsTranslated',
-      'setSavedWordList'
+      'setSavedWordList',
+      'setActiveIndex'
     ]),
     ...mapGetters([
       'getActiveWordList',
