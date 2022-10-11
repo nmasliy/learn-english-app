@@ -88,10 +88,16 @@ export default {
         return axios
           .get(URL)
           .then((response) => {
+            const translateWordFirst = response.data.def[0]?.tr[0]?.text
+            const translateWordSecond = response.data.def[1]?.tr[0]?.text
+
+            console.log(response.data.def[1]?.tr[0]?.text)
             const wordData = {
               text: wordText,
-              translate: response.data.def[0]?.tr[0]?.text || '',
-              transcription: response.data.def[0]?.ts || ''
+              translate: translateWordSecond
+                ? translateWordFirst + ', ' + translateWordSecond
+                : translateWordFirst || '',
+              transcription: response.data.def[0]?.ts || wordText
             }
 
             wordsData.push(wordData)
