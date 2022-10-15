@@ -1,5 +1,5 @@
 <template>
-  <div class="learn mt-16">
+  <div class="learn my-auto w-full">
     <transition name="fade-scale" mode="out-in">
       <div v-if="!isLoaded">
         <Loader />
@@ -31,7 +31,9 @@
               : 'Вы не знали перевод следующих слов:'
           }}
         </h1>
-        <ul class="grid grid-cols-3 gap-3 mb-6">
+        <ul
+          class="grid grid-cols-[repeat(auto-fill,_minmax(160px,_1fr))] gap-3 mb-6"
+        >
           <transition-group name="fade-scale-slowly" mode="out-in">
             <li
               v-for="(word, index) in wordsInLearning"

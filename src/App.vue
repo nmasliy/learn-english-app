@@ -1,53 +1,46 @@
 <template>
-  <div
-    class="app flex flex-col items-center min-h-screen bg-slate-100 px-4 py-20"
-  >
-    <div class="container text-center max-w-3xl mx-auto">
-      <nav class="my-6 text-xl font-medium">
-        <router-link
-          class="border-b-2 border-transparent transition-all"
-          :to="{ name: 'home' }"
-          >Проверка знаний</router-link
-        >
-        |
-        <router-link
-          class="border-b-2 border-transparent transition-all"
-          :to="{ name: 'learn' }"
-          >Учить слова</router-link
-        >
-        |
-        <router-link
-          class="border-b-2 border-transparent transition-all"
-          :to="{ name: 'profile' }"
-          >Профиль</router-link
-        >
-      </nav>
+  <div class="app bg-stone-100">
+    <div
+      class="flex flex-col items-center min-h-screen container text-center max-w-3xl mx-auto px-4 py-6 sm:pt-20"
+    >
+      <ThemeButtons :themes="themes" />
+      <Nav :activeLinkClasses="activeLinkClasses" :theme="theme" />
       <router-view v-slot="{ Component }">
         <transition name="fade-scale" mode="out-in">
           <component :is="Component" />
         </transition>
       </router-view>
-      <ThemeButtons :themes="themes" />
+      <Footer />
     </div>
   </div>
 </template>
 <script>
 import ThemeButtons from '@/components/ThemeButtons.vue'
-import { mapMutations } from 'vuex'
+import Footer from '@/components/Footer.vue'
+import Nav from '@/components/Nav.vue'
+import { mapMutations, mapGetters } from 'vuex'
 
 export default {
   name: 'App',
   components: {
-    ThemeButtons
+    ThemeButtons,
+    Footer,
+    Nav
   },
   data() {
     return {
-      themes: ['purple', 'fuchsia', 'cyan', 'amber', 'lime', 'red', 'stone']
+      themes: ['purple', 'cyan', 'amber', 'lime', 'red', 'stone']
     }
   },
   computed: {
     isThemeSavedInStorage() {
       return localStorage.getItem('theme')
+    },
+    theme() {
+      return this.getTheme()
+    },
+    activeLinkClasses() {
+      return `border-${this.theme}-300`
     }
   },
   mounted() {
@@ -56,7 +49,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setTheme'])
+    ...mapMutations(['setTheme']),
+    ...mapGetters(['getTheme'])
   }
 }
 </script>

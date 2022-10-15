@@ -28,7 +28,10 @@ export default {
     },
     setSavedWordList(state, payload) {
       state.savedWordList = payload
-      localStorage.setItem('savedWordList', JSON.stringify(payload))
+
+      if (JSON.stringify(payload) !== localStorage.getItem('savedWordList')) {
+        localStorage.setItem('savedWordList', JSON.stringify(payload))
+      }
     },
     setSavedIsTranslated(state, payload) {
       state.isTranslated = payload

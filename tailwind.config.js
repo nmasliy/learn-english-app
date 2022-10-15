@@ -7,14 +7,15 @@ module.exports = {
   },
   safelist: [
     {
-      pattern:
-        /bg-(|purple|fuchsia|sky|cyan|amber|lime|red|stone)-(500|600|800|300)/,
+      pattern: /bg-(|purple|sky|cyan|amber|lime|red|stone)-(500|600|800|300)/,
       variants: ['hover', 'enabled:hover']
     },
     {
-      pattern:
-        /text-(|purple|fuchsia|sky|cyan|amber|lime|red|stone)-(600|800)/,
+      pattern: /text-(|purple|sky|cyan|amber|lime|red|stone)-(600|800)/,
       variants: ['hover']
+    },
+    {
+      pattern: /border-(|purple|sky|cyan|amber|lime|red|stone)-(300|600)/
     }
   ],
   plugins: []

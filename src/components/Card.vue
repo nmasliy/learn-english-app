@@ -1,6 +1,6 @@
 <template>
   <div
-    class="rotate card relative mx-auto w-96 h-[22rem] p-8 flex flex-col items-center justify-center bg-white shadow-md rounded"
+    class="rotate card relative mx-auto max-w-[24rem] w-full h-[22rem] py-8 px-4 flex flex-col items-center justify-center bg-white shadow-md rounded sm:p-8"
     :class="animateClasses"
   >
     <div class="text-sm mb-12">

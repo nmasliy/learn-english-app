@@ -1,5 +1,5 @@
 <template>
-  <div class="home mt-16">
+  <div class="home my-auto w-full">
     <transition name="fade-scale" mode="out-in">
       <div v-if="!isLoaded">
         <Loader />

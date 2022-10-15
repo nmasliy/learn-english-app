@@ -1,5 +1,5 @@
 <template>
-  <div class="profile mt-16">
+  <div class="profile my-auto w-full">
     <transition name="fade-scale" mode="out-in">
       <div v-if="!isLoaded">
         <Loader />
@@ -11,9 +11,11 @@
       </div>
       <div v-else>
         <h1 class="mb-4 font-semibold text-lg text-center">
-          Вы выучили уже {{ learnedWordList.length }} слов:
+          Вы уже выучили {{ learnedWordList.length }} слов(а):
         </h1>
-        <ul class="grid grid-cols-3 gap-3 mb-6">
+        <ul
+          class="grid grid-cols-[repeat(auto-fill,_minmax(160px,_1fr))] gap-3 mb-6"
+        >
           <li
             v-for="word in learnedWordList"
             :key="word.text"
