@@ -10,13 +10,15 @@
           :isTranslated="getSavedIsTranslated()"
           :activeWordIndex="getSavedCurrentIndex()"
           :isReusable="true"
+          :theme="theme"
           @increaseWordIndex="changeWord"
           @saveWord="setSavedIsTranslated(true)"
           @onWordsOver="updateCard"
         />
         <button
           @click="finishLearning"
-          class="px-6 py-4 mt-8 bg-cyan-500 text-slate-50 font-semibold rounded transition-all duration-300 hover:bg-cyan-600"
+          class="px-6 py-4 mt-8 text-slate-50 font-semibold rounded transition-all duration-300"
+          :class="`bg-${theme}-500 enabled:hover:bg-${theme}-600`"
         >
           Вернуться к словам
         </button>
@@ -30,41 +32,50 @@
           }}
         </h1>
         <ul class="grid grid-cols-3 gap-3 mb-6">
-          <li
-            v-for="(word, index) in wordsInLearning"
-            :key="word.text"
-            class="p-4 pr-8 bg-white rounded shadow-sm relative"
-            :class="{
-              'cursor-pointer transition-colors hover:bg-cyan-50 select-none':
-                isLearnedAtLeastOnce,
-              'hover:bg-emerald-50 bg-emerald-50': word.isChecked
-            }"
-            @click="chooseWord(index)"
-          >
-            <svg
-              v-if="word.isChecked"
-              class="absolute right-2 bottom-2"
-              width="20"
-              height="20"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              viewBox="0 0 512 512"
-              style="enable-background: new 0 0 512 512"
-              xml:space="preserve"
+          <transition-group name="fade-scale-slowly" mode="out-in">
+            <li
+              v-for="(word, index) in wordsInLearning"
+              :key="word.text"
+              class="p-4 pr-8 bg-white rounded shadow-sm relative"
+              :class="{
+                'cursor-pointer transition-colors hover:bg-cyan-50 select-none':
+                  isLearnedAtLeastOnce,
+                'hover:bg-emerald-50 bg-emerald-50': word.isChecked
+              }"
+              @click="chooseWord(index)"
             >
-              <rect style="fill: #32bea6" width="512" height="512" />
-              <polygon
-                style="fill: #ffffff"
-                points="203.728,392.144 104.512,305.392 125.584,281.296 200.144,346.496 383.776,126.128 408.368,146.64 "
-              />
-            </svg>
-            <p class="text-cyan-600 font-semibold">{{ word.text }}</p>
-            <p>{{ word.translate }}</p>
-          </li>
+              <svg
+                v-if="word.isChecked"
+                class="absolute right-2 bottom-2"
+                width="20"
+                height="20"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                viewBox="0 0 512 512"
+                style="enable-background: new 0 0 512 512"
+                xml:space="preserve"
+              >
+                <rect style="fill: #32bea6" width="512" height="512" />
+                <polygon
+                  style="fill: #ffffff"
+                  points="203.728,392.144 104.512,305.392 125.584,281.296 200.144,346.496 383.776,126.128 408.368,146.64 "
+                />
+              </svg>
+              <p
+                class="font-semibold transition-colors"
+                :class="`text-${theme}-600`"
+              >
+                {{ word.text }}
+              </p>
+              <p>{{ word.translate }}</p>
+            </li>
+          </transition-group>
         </ul>
         <button
+          @click="saveLearnedWordList"
           v-if="isCheckedAtLeastOne"
-          class="px-6 py-4 bg-cyan-500 text-slate-50 font-semibold rounded transition-colors duration-300 hover:bg-cyan-600"
+          class="px-6 py-4 mr-2 text-slate-50 font-semibold rounded transition-colors duration-300"
+          :class="`bg-${theme}-500 enabled:hover:bg-${theme}-600`"
         >
           Я знаю эти слова
         </button>
@@ -74,7 +85,8 @@
         <button
           @click="startLearning"
           v-else
-          class="px-6 py-4 bg-cyan-500 text-slate-50 font-semibold rounded transition-all duration-300 hover:bg-cyan-600"
+          class="px-6 py-4 text-slate-50 font-semibold rounded transition-all duration-300"
+          :class="`bg-${theme}-500 enabled:hover:bg-${theme}-600`"
         >
           {{ startButtonText }}
         </button>
@@ -102,13 +114,18 @@ export default {
       isLearnStarted: false,
       savedWordList: [],
       isLoaded: false,
-      isLearnedAtLeastOnce: false,
       wordsInLearning: this.getSavedWordList()
     }
   },
   computed: {
+    theme() {
+      return this.getTheme()
+    },
     words() {
       return this.getSavedWordList()
+    },
+    isLearnedAtLeastOnce() {
+      return this.getIsLearnedAtLeastOnce()
     },
     isWordListSavedToStorage() {
       return localStorage.getItem('savedWordList')
@@ -122,7 +139,7 @@ export default {
         : 'Начать изучение'
     },
     isSavedWordsEnd() {
-      return this.getSavedCurrentIndex() + 1 >= this.words.length
+      return this.words.length === 0
     },
     isCheckedAtLeastOne() {
       return this.wordsInLearning.find((word) => word.isChecked)
@@ -140,6 +157,9 @@ export default {
       this.setSavedWordList(JSON.parse(localStorage.getItem('savedWordList')))
       this.setSavedIndex(+localStorage.getItem('savedCurrentIndex') || 0)
     }
+    if (this.isSavedWordsEnd) {
+      this.setIsLearnedAtLeastOnce(false)
+    }
     this.isLoaded = true
   },
   beforeUnmount() {
@@ -149,13 +169,17 @@ export default {
     ...mapGetters([
       'getSavedWordList',
       'getSavedCurrentIndex',
-      'getSavedIsTranslated'
+      'getSavedIsTranslated',
+      'getIsLearnedAtLeastOnce',
+      'getTheme'
     ]),
     ...mapMutations([
       'increaseSavedIndex',
       'setSavedIsTranslated',
       'setSavedIndex',
-      'setSavedWordList'
+      'setSavedWordList',
+      'addToLearnedWordList',
+      'setIsLearnedAtLeastOnce'
     ]),
 
     changeWord() {
@@ -169,12 +193,11 @@ export default {
       const newSavedWordList = shuffleArray(this.words)
 
       this.setSavedWordList(newSavedWordList)
-      localStorage.setItem('savedWordList', JSON.stringify(newSavedWordList))
     },
 
     finishLearning() {
       this.isLearnStarted = false
-      this.isLearnedAtLeastOnce = true
+      this.setIsLearnedAtLeastOnce(true)
       this.setSavedIndex(0)
     },
 
@@ -190,10 +213,19 @@ export default {
 
       this.isLoaded = false
       this.setSavedWordList(newSavedWordList)
-      localStorage.setItem('savedWordList', JSON.stringify(newSavedWordList))
       this.setSavedIsTranslated(false)
       this.setSavedIndex(0)
       this.isLoaded = true
+    },
+
+    saveLearnedWordList() {
+      const checkedWords = this.wordsInLearning.filter((word) => word.isChecked)
+      const remainingWords = this.wordsInLearning.filter(
+        (word) => !word.isChecked
+      )
+
+      this.addToLearnedWordList(checkedWords)
+      this.setSavedWordList(remainingWords)
     }
   }
 }

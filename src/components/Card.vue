@@ -21,22 +21,31 @@
     </div>
     <h4
       v-show="isTranslated"
-      class="text-xl mb-6 inset-x-0 text-cyan-800 font-semibold"
+      class="text-xl mb-6 inset-x-0 font-semibold transition-colors"
+      :class="`text-${theme}-800`"
     >
       {{ word.translate }}
     </h4>
     <div class="flex gap-x-3 w-full mt-auto">
       <button
-        class="w-full px-6 py-4 bg-cyan-500 text-slate-50 font-semibold rounded transition-all duration-300 enabled:hover:bg-cyan-600"
-        :class="{ 'opacity-50 bg-slate-500': isTranslated }"
+        class="w-full px-6 py-4 text-slate-50 font-semibold rounded transition-all duration-300"
+        :class="
+          isTranslated
+            ? 'opacity-50 bg-slate-500'
+            : `bg-${theme}-500 enabled:hover:bg-${theme}-600`
+        "
         :disabled="isTranslated || isWordChanging"
         @click="saveWord"
       >
         Перевести
       </button>
       <button
-        class="w-full px-6 py-4 bg-cyan-500 text-slate-50 font-semibold rounded transition-all duration-300 enabled:hover:bg-cyan-600"
-        :class="{ 'opacity-50 bg-slate-500': isNextButtonDisabled }"
+        class="w-full px-6 py-4 text-slate-50 font-semibold rounded transition-all duration-300"
+        :class="
+          isNextButtonDisabled
+            ? 'opacity-50 bg-slate-500'
+            : `bg-${theme}-500 enabled:hover:bg-${theme}-600`
+        "
         :disabled="isNextButtonDisabled || isWordChanging"
         @click="setNextCard"
       >
@@ -73,6 +82,10 @@ export default {
     isReusable: {
       type: Boolean,
       default: false
+    },
+    theme: {
+      type: String,
+      default: 'cyan'
     }
   },
   computed: {

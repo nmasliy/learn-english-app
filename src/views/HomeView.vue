@@ -10,6 +10,7 @@
           :isTranslated="getActiveIsTranslated()"
           :activeWordIndex="activeWordIndex"
           :isReusable="true"
+          :theme="theme"
           @increaseWordIndex="changeWord"
           @saveWord="saveWord"
           @onWordsOver="updateCard"
@@ -33,6 +34,9 @@ export default {
     }
   },
   computed: {
+    theme() {
+      return this.getTheme()
+    },
     isWordListSavedToStorage() {
       return localStorage.getItem('activeWordList')
     },
@@ -81,7 +85,8 @@ export default {
       'getActiveWordList',
       'getActiveCurrentIndex',
       'getActiveIsTranslated',
-      'getSavedWordList'
+      'getSavedWordList',
+      'getTheme'
     ]),
 
     changeWord() {

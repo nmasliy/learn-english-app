@@ -2,7 +2,8 @@ export default {
   state: {
     savedWordList: [],
     savedCurrentIndex: 0,
-    savedIsTranslated: false
+    savedIsTranslated: false,
+    isLearnedAtLeastOnce: false
   },
   mutations: {
     increaseSavedIndex(state) {
@@ -27,9 +28,13 @@ export default {
     },
     setSavedWordList(state, payload) {
       state.savedWordList = payload
+      localStorage.setItem('savedWordList', JSON.stringify(payload))
     },
     setSavedIsTranslated(state, payload) {
       state.isTranslated = payload
+    },
+    setIsLearnedAtLeastOnce(state, payload) {
+      state.isLearnedAtLeastOnce = payload
     }
   },
   getters: {
@@ -41,6 +46,9 @@ export default {
     },
     getSavedIsTranslated(state) {
       return state.isTranslated
+    },
+    getIsLearnedAtLeastOnce(state) {
+      return state.isLearnedAtLeastOnce
     }
   }
 }
