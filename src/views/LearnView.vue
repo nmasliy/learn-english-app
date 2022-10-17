@@ -73,14 +73,16 @@
             </li>
           </transition-group>
         </ul>
-        <button
-          @click="saveLearnedWordList"
-          v-if="isCheckedAtLeastOne"
-          class="px-6 py-4 mr-2 text-slate-50 font-semibold rounded transition-colors duration-300"
-          :class="`bg-${theme}-500 enabled:hover:bg-${theme}-600`"
-        >
-          Я знаю эти слова
-        </button>
+        <transition name="fade-scale" mode="out-in">
+          <button
+            @click="saveLearnedWordList"
+            v-if="isCheckedAtLeastOne"
+            class="px-6 py-4 mb-2 mr-2 text-slate-50 font-semibold rounded transition-colors duration-300"
+            :class="`bg-${theme}-500 enabled:hover:bg-${theme}-600`"
+          >
+            Я знаю эти слова
+          </button>
+        </transition>
         <h2 v-if="!isMinWordsTolearn" class="mb-4 font-semibold text-lg">
           Вам нужно набрать хотя бы {{ minWordsToLearn }} слов для изучения
         </h2>

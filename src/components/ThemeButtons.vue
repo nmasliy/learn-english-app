@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="themes"
-    class="themes top-0 bottom-0 p-8 left-0 mb-6 sm:fixed sm:mb-0 bg-stone-50 shadow-lg"
+    class="themes top-0 bottom-0 bg-stone-50 shadow-lg p-4 left-0 mb-6 sm:fixed sm:p-8 sm:mb-0"
   >
     <p class="mb-2 text-lg">Тема:</p>
     <ul class="sm:block flex justify-center">

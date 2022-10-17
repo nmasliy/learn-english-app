@@ -1,7 +1,7 @@
 <template>
   <div class="app bg-stone-100">
     <div
-      class="flex flex-col items-center min-h-screen container text-center max-w-3xl mx-auto px-4 py-6 sm:pt-20"
+      class="flex flex-col items-center min-h-screen container text-center max-w-3xl mx-auto px-4 py-6 sm:pt-10"
     >
       <ThemeButtons :themes="themes" />
       <Nav :activeLinkClasses="activeLinkClasses" :theme="theme" />
