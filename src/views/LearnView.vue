@@ -35,65 +35,47 @@
           class="grid grid-cols-[repeat(auto-fill,_minmax(160px,_1fr))] gap-3 mb-6"
         >
           <transition-group name="fade-scale-slowly" mode="out-in">
-            <li
+            <LearnListItem
               v-for="(word, index) in wordsInLearning"
               :key="word.text"
-              class="p-4 pr-8 bg-white rounded shadow-sm relative"
-              :class="{
-                'cursor-pointer transition-colors hover:bg-cyan-50 select-none':
-                  isLearnedAtLeastOnce,
-                'hover:bg-emerald-50 bg-emerald-50': word.isChecked
-              }"
-              @click="chooseWord(index)"
-            >
-              <svg
-                v-if="word.isChecked"
-                class="absolute right-2 bottom-2"
-                width="20"
-                height="20"
-                xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-                viewBox="0 0 512 512"
-                style="enable-background: new 0 0 512 512"
-                xml:space="preserve"
-              >
-                <rect style="fill: #32bea6" width="512" height="512" />
-                <polygon
-                  style="fill: #ffffff"
-                  points="203.728,392.144 104.512,305.392 125.584,281.296 200.144,346.496 383.776,126.128 408.368,146.64 "
-                />
-              </svg>
-              <p
-                class="font-semibold transition-colors"
-                :class="`text-${theme}-600`"
-              >
-                {{ word.text }}
-              </p>
-              <p>{{ word.translate }}</p>
-            </li>
+              :isLearnedAtLeastOnce="isLearnedAtLeastOnce"
+              :theme="theme"
+              :text="word.text"
+              :translate="word.translate"
+              :isChecked="word.isChecked"
+              :index="index"
+              @chooseWord="chooseWord(index)"
+            />
           </transition-group>
         </ul>
-        <transition name="fade-scale" mode="out-in">
-          <button
-            @click="saveLearnedWordList"
-            v-if="isCheckedAtLeastOne"
-            class="px-6 py-4 mb-2 mr-2 text-slate-50 font-semibold rounded transition-colors duration-300"
-            :class="`bg-${theme}-500 enabled:hover:bg-${theme}-600`"
-          >
-            Я знаю эти слова
-          </button>
-        </transition>
-        <h2 v-if="!isMinWordsTolearn" class="mb-4 font-semibold text-lg">
-          Вам нужно набрать хотя бы {{ minWordsToLearn }} слов для изучения
-        </h2>
-        <button
-          @click="startLearning"
-          v-else
-          class="px-6 py-4 text-slate-50 font-semibold rounded transition-all duration-300"
-          :class="`bg-${theme}-500 enabled:hover:bg-${theme}-600`"
-        >
-          {{ startButtonText }}
-        </button>
+        <div>
+          <transition name="fade-scale" mode="out-in">
+            <button
+              @click="saveLearnedWordList"
+              v-if="isCheckedAtLeastOne"
+              class="px-6 py-4 mb-2 mr-2 text-slate-50 font-semibold rounded transition-colors duration-300"
+              :class="`bg-${theme}-500 enabled:hover:bg-${theme}-600`"
+            >
+              Я знаю эти слова
+            </button>
+          </transition>
+        </div>
+        <div v-if="!isMinWordsTolearn" class="mb-4">
+          <h2 class="font-semibold text-lg">
+            Вам нужно набрать хотя бы {{ minWordsToLearn }} слов для изучения
+          </h2>
+        </div>
+        <div v-else>
+          <transition name="fade-scale" mode="out-in">
+            <button
+              @click="startLearning"
+              class="px-6 py-4 text-slate-50 font-semibold rounded transition-all duration-300"
+              :class="`bg-${theme}-500 enabled:hover:bg-${theme}-600`"
+            >
+              {{ startButtonText }}
+            </button>
+          </transition>
+        </div>
       </div>
       <div v-else class="text-left">
         <h1 class="mb-4 font-semibold text-lg text-center">
@@ -108,10 +90,11 @@ import Card from '@/components/Card.vue'
 import Loader from '@/components/Loader.vue'
 import { shuffleArray } from '@/helpers'
 import { mapGetters, mapMutations } from 'vuex'
+import LearnListItem from '@/components/LearnListItem.vue'
 
 export default {
   name: 'LearnView',
-  components: { Card, Loader },
+  components: { Card, Loader, LearnListItem },
   data() {
     return {
       minWordsToLearn: 5,
